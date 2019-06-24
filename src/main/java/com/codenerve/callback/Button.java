@@ -1,7 +1,18 @@
 package com.codenerve.callback;
 
 class Button {
-    public void onClick(ClickEventHandler clickHandler) {
-        new Thread(clickHandler::handleClick).start();
+    public void onClick(ClickEventHandler clickEventHandler) {
+
+        someLongOperation();
+
+        new Thread(clickEventHandler::handleClick).start();
+    }
+
+    private void someLongOperation() {
+        try {
+            Thread.sleep(5_000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
