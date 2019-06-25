@@ -10,7 +10,7 @@ class Button {
 
     private void someLongOperation() {
         try {
-            Thread.sleep(5_000);
+            Thread.sleep(2_000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
