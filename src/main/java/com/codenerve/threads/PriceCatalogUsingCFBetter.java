@@ -35,7 +35,7 @@ public class PriceCatalogUsingCFBetter {
                 })
                 .join();
                 // only needed for this demo as the main thread dies before the results are returns.
-                // a sleep would also fix this for this example.
+                // a sleep would also fix this for this example. But not a very good solution (how long do I wait?)
     }
 
     private double exchange(Price price, double exchangeRate) {
