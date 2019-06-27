@@ -37,6 +37,7 @@ public class PriceCatalogUsingCFBetter {
                 .join();
     }
 
+
     private double exchange(Price price, double exchangeRate) {
         return Utils.round(price.getAmount() * exchangeRate);
     }
