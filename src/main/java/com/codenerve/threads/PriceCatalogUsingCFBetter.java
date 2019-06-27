@@ -18,6 +18,7 @@ public class PriceCatalogUsingCFBetter {
     private final Catalogue catalogue = new Catalogue();
     private final PriceFinder priceFinder = new PriceFinder();
     private final ExchangeService exchangeService = new ExchangeService();
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
         new PriceCatalogUsingCFBetter().findLocalDiscountedPrice(Currency.CHF, "Nexus7");
@@ -34,23 +35,25 @@ public class PriceCatalogUsingCFBetter {
                     LOGGER.info("It took us {} ms to calculate this", System.currentTimeMillis() - time);
                 })
                 .join();
-                // only needed for this demo as the main thread dies before the results are returns.
-                // a sleep would also fix this for this example. But not a very good solution (how long do I wait?)
     }
+
 
     private double exchange(Price price, double exchangeRate) {
         return Utils.round(price.getAmount() * exchangeRate);
     }
 
     private CompletableFuture<Product> lookupProduct(String productName) {
-        return CompletableFuture.supplyAsync(() -> catalogue.productByName(productName));
+        return CompletableFuture.supplyAsync(() -> catalogue.productByName(productName), executorService);
     }
 
     private CompletableFuture<Price> findBestPrice(Product product) {
-        return CompletableFuture.supplyAsync(() -> priceFinder.findBestPrice(product));
+        return CompletableFuture.supplyAsync(() -> priceFinder.findBestPrice(product), executorService);
     }
 
     private CompletableFuture<Double> lookupExchange(Currency localCurrency) {
-        return CompletableFuture.supplyAsync(() -> exchangeService.lookupExchangeRate(Currency.USD, localCurrency));
+        return CompletableFuture.supplyAsync(() -> exchangeService.lookupExchangeRate(Currency.USD, localCurrency), executorService);
     }
+
+    // NOTE: overriding methods in completable future class allow you to assign your own executor service
+    // With out it you use the ForkJoinPool that is shared between CompletableFutures and java8's parallel streams
 }
